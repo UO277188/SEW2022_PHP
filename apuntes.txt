@@ -1,0 +1,36 @@
+----------------- CALCULADORAS -----------------
+si en js es:
+script
+section
+    label
+    input
+    button value on click
+    ...
+
+php es:
+<?php
+session->start();
+class{
+    1) manejo de sesion (GUARDAR TODA LA CALC EN SESION)
+        if(isset($SESSION['calculadora']))
+            $calculadora = $SESSION['calculadora']
+    2) manejo pulsaciones (SOLO RATON, NO HAY TECLADO)
+        if(count($_POST)>0)
+            if(isset($_POST['suma']))
+                $calculadora->suma()
+            al final guardar en sesion otra vez
+}
+?>
+
+[...]
+form action="#" method="post"
+    label
+    input type="text" value="<?php echo $calc->getPantalla();?>
+    button type="submit" name=""
+
+
+----------------- EJERCICIO CONSUMO SERVICIOS -----------------
+$url = "______"
+$datos = filegetcontents($url)
+    $obj = json-decode($datos) // JSON
+    $obj = unserialize($datos) // XML
