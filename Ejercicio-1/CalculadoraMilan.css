@@ -39,30 +39,30 @@ input:active {
 
 /* Especificidad 011 
     Todos los botones heredan la propiedad color de body */
-input[type="button"] {
+input[type="submit"] {
     background-color: rgb(255, 70, 70);
 }
 
 /* Especificidades 021 
     Todos los botones heredan la propiedad color de body */
-input[type="button"][value="0"],
-input[type="button"][value="1"],
-input[type="button"][value="2"],
-input[type="button"][value="3"],
-input[type="button"][value="4"],
-input[type="button"][value="5"],
-input[type="button"][value="6"],
-input[type="button"][value="7"],
-input[type="button"][value="8"],
-input[type="button"][value="9"],
-input[type="button"][value="0"],
-input[type="button"][value="."],
-input[type="button"][value="="] {
+input[type="submit"][value="0"],
+input[type="submit"][value="1"],
+input[type="submit"][value="2"],
+input[type="submit"][value="3"],
+input[type="submit"][value="4"],
+input[type="submit"][value="5"],
+input[type="submit"][value="6"],
+input[type="submit"][value="7"],
+input[type="submit"][value="8"],
+input[type="submit"][value="9"],
+input[type="submit"][value="0"],
+input[type="submit"][value="."],
+input[type="submit"][value="="] {
     background-color: rgb(255, 255, 255);
 }
 
 /* Especificidad 021 */
-input[type="button"][value="+"] {
+input[type="submit"][value="+"] {
     grid-row: span 2;
 }
 
