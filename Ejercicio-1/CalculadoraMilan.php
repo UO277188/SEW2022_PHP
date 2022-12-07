@@ -58,11 +58,11 @@ class CalculadoraMilan {
     }
 
     public function mMenos() {
-        $this->memoria = floatval($this->memoria) - eval("return $this->operacion;");
+        $this->memoria = floatval($this->memoria) - $this->evaluar($this->operacion);
     }
 
     public function mMas() {
-        $this->memoria = floatval($this->memoria) + eval("return $this->operacion;");
+        $this->memoria = floatval($this->memoria) + $this->evaluar($this->operacion);
     }
 
     public function borrar() {
@@ -76,8 +76,8 @@ class CalculadoraMilan {
             $this->operacion = "";
         } else {
             try {
-                $this->pantalla = eval("return $this->operacion; ");
-                $this->operacion = eval("return $this->operacion; ");
+                $this->pantalla = $this->evaluar($this->operacion);
+                $this->operacion = $this->evaluar($this->operacion);
             } catch (Exception $e) {
                 $this->pantalla = "";
                 $this->operacion = "";
@@ -108,9 +108,9 @@ class CalculadoraMilan {
             $this->operacion = "";
         } else {
             try {
-                $res = eval("return $this->operacion;");
-                $this->pantalla = eval("return -1 * $res;");
-                $this->operacion = eval("return -1 * $res;");
+                $res = $this->evaluar($this->operacion);
+                $this->pantalla = $this->evaluar(-1 * $res);
+                $this->operacion = $this->evaluar(-1 * $res);
             } catch (Exception $e) {
                 $this->pantalla = "";
                 $this->operacion = "";
@@ -139,14 +139,27 @@ class CalculadoraMilan {
     public function getPantalla() {
         return $this->pantalla;
     }
+
+    public function mostrarError() {
+        $this->operacion = "";
+        $this->pantalla = "ERROR";
+    }
+
+    protected function evaluar($operacion) {
+        try {
+            return eval("return $operacion;");
+        } catch (Exception $e) {
+            $this->mostrarError();
+        }
+    }
 }
 
-if (!isset($_SESSION['calc'])) {
-    $_SESSION['calc'] = new CalculadoraMilan();
+if (!isset($_SESSION['calcMilan'])) {
+    $_SESSION['calcMilan'] = new CalculadoraMilan();
 }
 
 if (count($_POST) > 0) {
-    $calc = $_SESSION['calc'];
+    $calc = $_SESSION['calcMilan'];
     if (isset($_POST['C'])) $calc->borrar();
     if (isset($_POST['CE'])) $calc->borrar();
     if (isset($_POST['+/-'])) $calc->masMenos();
@@ -176,7 +189,7 @@ if (count($_POST) > 0) {
     if (isset($_POST['='])) $calc->igual();
     if (isset($_POST['M+'])) $calc->mMas();
 
-    $_SESSION['calc'] = $calc;
+    $_SESSION['calcMilan'] = $calc;
 }
 ?>
 
@@ -202,8 +215,7 @@ if (count($_POST) > 0) {
 <body>
     <main>
         <form action='#' method='POST'>
-            <label>Calculadora<input type='text' disabled value='<?php echo $_SESSION['calc']->getPantalla(); ?>' />
-            </label>
+            <label>Calculadora<input type="text" disabled value='<?php echo $_SESSION['calcMilan']->getPantalla(); ?>' /></label>
 
             <input type='submit' value='C' name='C' />
             <input type='submit' value='CE' name='CE' />

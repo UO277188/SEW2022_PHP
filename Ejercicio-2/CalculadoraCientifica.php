@@ -58,11 +58,11 @@ class CalculadoraMilan {
     }
 
     public function mMenos() {
-        $this->memoria = floatval($this->memoria) - eval("return $this->operacion;");
+        $this->memoria = floatval($this->memoria) - $this->evaluar($this->operacion);
     }
 
     public function mMas() {
-        $this->memoria = floatval($this->memoria) + eval("return $this->operacion;");
+        $this->memoria = floatval($this->memoria) + $this->evaluar($this->operacion);
     }
 
     public function borrar() {
@@ -76,8 +76,8 @@ class CalculadoraMilan {
             $this->operacion = "";
         } else {
             try {
-                $this->pantalla = eval("return $this->operacion; ");
-                $this->operacion = eval("return $this->operacion; ");
+                $this->pantalla = $this->evaluar($this->operacion);
+                $this->operacion = $this->evaluar($this->operacion);
             } catch (Exception $e) {
                 $this->pantalla = "";
                 $this->operacion = "";
@@ -108,9 +108,9 @@ class CalculadoraMilan {
             $this->operacion = "";
         } else {
             try {
-                $res = eval("return $this->operacion;");
-                $this->pantalla = eval("return -1 * $res;");
-                $this->operacion = eval("return -1 * $res;");
+                $res = $this->evaluar($this->operacion);
+                $this->pantalla = $this->evaluar(-1 * $res);
+                $this->operacion = $this->evaluar(-1 * $res);
             } catch (Exception $e) {
                 $this->pantalla = "";
                 $this->operacion = "";
@@ -138,6 +138,19 @@ class CalculadoraMilan {
 
     public function getPantalla() {
         return $this->pantalla;
+    }
+
+    public function mostrarError() {
+        $this->operacion = "";
+        $this->pantalla = "ERROR";
+    }
+
+    protected function evaluar($operacion) {
+        try {
+            return eval("return $operacion;");
+        } catch (Exception $e) {
+            $this->mostrarError();
+        }
     }
 }
 
@@ -182,11 +195,11 @@ class CalculadoraCientifica extends CalculadoraMilan {
     }
 
     public function ms() {
-        $this->memoria = eval("return $this->operacion;");
+        $this->memoria = $this->evaluar($this->operacion);
     }
 
     public function cuadrado() {
-        $result = eval("return $this->operacion;") * eval("return $this->operacion;");
+        $result = $this->evaluar($this->operacion) * $this->evaluar($this->operacion);
         $this->operacion = $result;
         $this->pantalla = $result;
     }
@@ -196,15 +209,15 @@ class CalculadoraCientifica extends CalculadoraMilan {
             $this->pantalla = substr($this->pantalla, 0, -1);
             $this->operacion = substr($this->operacion, 0, -1);
         }
-        $this->operacion += "**";
-        $this->pantalla += "^";
+        $this->operacion .= "**";
+        $this->pantalla .= "^";
     }
 
     public function sin() {
         if ($this->grados)
-            $numero = eval("return $this->operacion;") * pi() / 180;
+            $numero = $this->evaluar($this->operacion) * pi() / 180;
         else
-            $numero = eval("return $this->operacion;");
+            $numero = $this->evaluar($this->operacion);
 
         if ($this->hiperbolicas) {
             $result = sinh($numero);
@@ -223,9 +236,9 @@ class CalculadoraCientifica extends CalculadoraMilan {
 
     public function cos() {
         if ($this->grados)
-            $numero = eval("return $this->operacion;") * pi() / 180;
+            $numero = $this->evaluar($this->operacion) * pi() / 180;
         else
-            $numero = eval("return $this->operacion;");
+            $numero = $this->evaluar($this->operacion);
 
         if ($this->hiperbolicas) {
             $result = cosh($numero);
@@ -244,9 +257,9 @@ class CalculadoraCientifica extends CalculadoraMilan {
 
     public function tan() {
         if ($this->grados)
-            $numero = eval("return $this->operacion;") * pi() / 180;
+            $numero = $this->evaluar($this->operacion) * pi() / 180;
         else
-            $numero = eval("return $this->operacion;");
+            $numero = $this->evaluar($this->operacion);
 
         if ($this->hiperbolicas) {
             $result = tanh($numero);
@@ -264,25 +277,25 @@ class CalculadoraCientifica extends CalculadoraMilan {
     }
 
     public function raiz() {
-        $result = sqrt(eval("return $this->operacion;"));
+        $result = sqrt($this->evaluar($this->operacion));
         $this->operacion = $result;
         $this->pantalla = $result;
     }
 
     public function diezElevadoA() {
-        $result = pow(10, eval("return $this->operacion;"));
+        $result = pow(10, $this->evaluar($this->operacion));
         $this->operacion = $result;
         $this->pantalla = $result;
     }
 
     public function log() {
-        $result = log(eval("return $this->operacion;"));
+        $result = log($this->evaluar($this->operacion));
         $this->operacion = $result;
         $this->pantalla = $result;
     }
 
     public function exp() {
-        $result = exp(eval("return $this->operacion;"));
+        $result = exp($this->evaluar($this->operacion));
         $this->operacion = $result;
         $this->pantalla = $result;
     }
@@ -306,8 +319,12 @@ class CalculadoraCientifica extends CalculadoraMilan {
 
     public function retroceso() {
         if ($this->operacion != "") {
+            $caracter = substr($this->pantalla, -1);
             $this->pantalla = substr($this->pantalla, 0, -1);
             $this->operacion = substr($this->operacion, 0, -1);
+
+            if ($caracter == "^")
+                $this->operacion = substr($this->operacion, 0, -1);
         }
     }
 
@@ -316,9 +333,9 @@ class CalculadoraCientifica extends CalculadoraMilan {
     }
 
     public function factorial() {
-        $result = $this->factorialRecursivo(eval("return $this->operacion;"));
+        $result = $this->factorialRecursivo($this->evaluar($this->operacion));
         $this->operacion = $result;
-        $this->pantalla = eval("return $this->operacion;");
+        $this->pantalla = $this->evaluar($this->operacion);
     }
 
     public function factorialRecursivo($n) {
@@ -343,6 +360,7 @@ if (!isset($_SESSION['calc'])) {
 if (count($_POST) > 0) {
     $calc = $_SESSION['calc'];
 
+    if (isset($_POST['DEG'])) $calc->deg();
     if (isset($_POST['HYP'])) $calc->hyp();
     if (isset($_POST['F-E'])) $calc->fe();
 
@@ -351,6 +369,12 @@ if (count($_POST) > 0) {
     if (isset($_POST['M+'])) $calc->mMas();
     if (isset($_POST['M-'])) $calc->mMenos();
     if (isset($_POST['MS'])) $calc->ms();
+
+    if (isset($_POST['x^2'])) $calc->cuadrado();
+    if (isset($_POST['x^y'])) $calc->elevar();
+    if (isset($_POST['sin'])) $calc->sin();
+    if (isset($_POST['cos'])) $calc->cos();
+    if (isset($_POST['tan'])) $calc->tan();
 
     if (isset($_POST['√'])) $calc->raiz();
     if (isset($_POST['10^x'])) $calc->diezElevadoA();
@@ -362,7 +386,7 @@ if (count($_POST) > 0) {
     if (isset($_POST['CE'])) $calc->borrar();
     if (isset($_POST['C'])) $calc->borrar();
     if (isset($_POST['⌫'])) $calc->retroceso();
-    if (isset($_POST['÷'])) $calc->tan();
+    if (isset($_POST['÷'])) $calc->division();
 
     if (isset($_POST['π'])) $calc->pi();
     if (isset($_POST['7'])) $calc->digitos(7);
