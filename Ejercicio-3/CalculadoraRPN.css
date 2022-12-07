@@ -1,0 +1,80 @@
+/* Especificidad 001 */
+body {
+    background-color: rgb(221, 188, 145);
+    color: rgb(0, 0, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Especificidad 001, hereda la propiedad color de body */
+form {
+    background-color: rgb(164, 164, 164);
+    padding: 0.8em;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1em;
+    border: 0.2em solid black;
+}
+
+/* Especificidad 001 */
+input {
+    border: 0.1em solid #111;
+    padding: 0.5em;
+    border-radius: 0.5em;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+/* Especificidad 011 */
+input:active {
+    border: 0.1em solid red;
+}
+
+
+/* Especificidad 011 
+    Todos los botones heredan la propiedad color de body */
+input[type="submit"] {
+    background-color: rgb(255, 150, 150);
+}
+
+/* Especificidades 021 
+        Todos los botones heredan la propiedad color de body */
+input[type="submit"][value="0"],
+input[type="submit"][value="1"],
+input[type="submit"][value="2"],
+input[type="submit"][value="3"],
+input[type="submit"][value="4"],
+input[type="submit"][value="5"],
+input[type="submit"][value="6"],
+input[type="submit"][value="7"],
+input[type="submit"][value="8"],
+input[type="submit"][value="9"],
+input[type="submit"][value="."] {
+    background-color: rgb(255, 255, 255)
+}
+
+/* Especificidad 001 */
+label {
+    display: grid;
+    grid-column: span 4;
+    font-size: 2em;
+}
+
+/* Especificidad 001 */
+textarea {
+    overflow: scroll;
+    resize: none;
+    text-align: right;
+    cursor: default;
+    font-size: 1em;
+}
+
+/* Especificidad 011 */
+input[type="text"] {
+    text-align: right;
+    background-color: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    cursor: default;
+}
