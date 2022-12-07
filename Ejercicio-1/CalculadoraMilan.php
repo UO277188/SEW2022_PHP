@@ -172,7 +172,7 @@ if (count($_POST) > 0) {
     if (isset($_POST['M-'])) $calc->mMenos();
 
     if (isset($_POST['0'])) $calc->digitos(0);
-    if (isset($_POST['.'])) $calc->punto();
+    if (isset($_POST['punto'])) $calc->punto();
     if (isset($_POST['='])) $calc->igual();
     if (isset($_POST['M+'])) $calc->mMas();
 
@@ -230,7 +230,7 @@ if (count($_POST) > 0) {
             <input type='submit' value='M-' name='M-' />
 
             <input type='submit' value='0' name='0' />
-            <input type='submit' value='.' name='.' />
+            <input type='submit' value='.' name='punto' />
             <input type='submit' value='=' name='=' />
             <input type='submit' value='M+' name='M+' />
         </form>
