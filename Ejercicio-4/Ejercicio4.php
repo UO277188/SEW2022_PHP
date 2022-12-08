@@ -107,7 +107,7 @@ if (count($_POST) > 0) {
         <p>Selecciona la fecha a consultar (por defecto es hoy), la divisa y el peso en onzas.</p>
 
         <form action='#' method='POST'>
-            <label>Fecha<input type="date" name="fecha" step="1" min="2000-01-01"></label>
+            <label>Fecha<input type="date" name="fecha" step="1" min="2022-01-01" max="<?php echo date('Y-m-d') ?>"></label>
 
             <label for="moneda">Divisa</label>
             <select name="moneda" id="moneda">
@@ -115,7 +115,7 @@ if (count($_POST) > 0) {
                 <option value="USD">Dólares estadounidenses $ (USD)</option>
             </select>
 
-            <label>Peso del cobre en onzas<input type="number" name="peso" min=0 step=0.01></label>
+            <label>Peso del cobre en onzas<input type="number" value=1 name="peso" min=1 step=0.01></label>
 
             <input type="submit" value="Obtener precio" name="Obtener precio">
         </form>
