@@ -10,11 +10,11 @@ class Pila {
     }
 
     public function apilar($valor) {
-        array_unshift($this->pila, $valor);
+        array_push($this->pila, $valor);
     }
 
     public function desapilar() {
-        return array_shift($this->pila);
+        return array_pop($this->pila);
     }
 
     public function borrar() {
