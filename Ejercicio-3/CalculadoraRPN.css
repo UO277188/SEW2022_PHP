@@ -8,11 +8,6 @@ body {
     height: 100vh;
 }
 
-main {
-    background-color: white;
-
-}
-
 /* Especificidad 001, hereda la propiedad color de body */
 form {
     background-color: rgb(164, 164, 164);
