@@ -106,37 +106,49 @@ class BaseDatos {
         }
 
         $preparedQuery->bind_param("s", $_REQUEST['dni']);
-        $resultados = $preparedQuery->execute();
+        $preparedQuery->execute();
+        $resultados = $preparedQuery->get_result();
 
-        while ($fila = $resultados->fetch_array()) {
-            $this->textoResultado = "DNI: " . $fila['DNI_Supervisor'] .
-                "\n, Nombre: " . $fila['nombreSupervisor'] .
-                "\n Apellidos: " . $fila['apellidosSupervisor'] .
-                "\n Email: " . $fila['email'] .
-                "\n Telefono: " . $fila['telefono'] .
-                "\n Edad: " . $fila['edad'] .
-                "\n Sexo: " . $fila['sexo'] .
-                "\n Nivel informático: " . $fila['nivelInformatico'] .
-                "\n Tiempo (segundos): " . $fila['tiempoSegundos'] .
-                "\n Completada: " . $fila['pruebaCompletada'] .
-                "\n Comentarios: " . $fila['comentarios'] .
-                "\n Propuestas: " . $fila['propuestas'] .
-                "\n Valoracion: " . $fila['valoracion'];
-        }
+        if ($resultados->num_rows > 0)
+            while ($fila = $resultados->fetch_array()) {
+                $this->textoResultado = "DNI: " . $fila['DNI_Supervisor'] .
+                    "\n, Nombre: " . $fila['nombreSupervisor'] .
+                    "\n, Apellidos: " . $fila['apellidosSupervisor'] .
+                    "\n, Email: " . $fila['email'] .
+                    "\n, Telefono: " . $fila['telefono'] .
+                    "\n, Edad: " . $fila['edad'] .
+                    "\n, Sexo: " . $fila['sexo'] .
+                    "\n, Nivel informático: " . $fila['nivelInformatico'] .
+                    "\n, Tiempo (segundos): " . $fila['tiempoSegundos'] .
+                    "\n, Completada: " . $fila['pruebaCompletada'] .
+                    "\n, Comentarios: " . $fila['comentarios'] .
+                    "\n, Propuestas: " . $fila['propuestas'] .
+                    "\n, Valoracion: " . $fila['valoracion'];
+            }
+        else
+            $this->textoResultado = "No hay resultados.";
     }
 
     public function modificar() {
         $this->conectar();
         $this->db->select_db("dbEjercicio6");
 
-        $query = "UPDATE pruebasUsabilidad(DNI_Supervisor, nombreSupervisor, apellidosSupervisor, 
-                                                email, telefono, edad, sexo, nivelInformatico, tiempoSegundos, 
-                                                pruebaCompletada, comentarios, propuestas, valoracion) 
-                VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        $query = "UPDATE pruebasUsabilidad SET nombreSupervisor = COALESCE(?, nombreSupervisor), 
+                                                apellidosSupervisor = COALESCE(?, apellidosSupervisor), 
+                                                email = COALESCE(?, email), 
+                                                telefono = COALESCE(?, telefono), 
+                                                edad = COALESCE(?, edad), 
+                                                sexo = COALESCE(?, sexo), 
+                                                nivelInformatico = COALESCE(?, nivelInformatico), 
+                                                tiempoSegundos = COALESCE(?, tiempoSegundos), 
+                                                pruebaCompletada = COALESCE(?, pruebaCompletada), 
+                                                comentarios = COALESCE(?, comentarios), 
+                                                propuestas = COALESCE(?, propuestas), 
+                                                valoracion = COALESCE(?, valoracion)
+                        WHERE DNI_Supervisor=?";
         $preparedQuery = $this->db->prepare($query);
         $preparedQuery->bind_param(
-            "s,s,s,s,i,i,s,i,i,b,s,s,i",
-            $_REQUEST['dni'],
+            "sssiisiiissis",
             $_REQUEST['nombre'],
             $_REQUEST['apellidos'],
             $_REQUEST['email'],
@@ -145,10 +157,11 @@ class BaseDatos {
             $_REQUEST['sexo'],
             $_REQUEST['nivel'],
             $_REQUEST['tiempo'],
-            $_REQUEST['completada'] == "si",
+            $_REQUEST['completada'],
             $_REQUEST['comentarios'],
             $_REQUEST['propuestas'],
-            $_REQUEST['valoracion']
+            $_REQUEST['valoracion'],
+            $_REQUEST['dni']
         );
         $resultado = $preparedQuery->execute();
         $this->textoResultado = "Fila modificada.";
@@ -157,6 +170,20 @@ class BaseDatos {
     public function eliminar() {
         $this->conectar();
         $this->db->select_db("dbEjercicio6");
+
+        $query = "DELETE FROM pruebasUsabilidad WHERE DNI_Supervisor=?";
+        $preparedQuery = $this->db->prepare($query);
+        if ($_REQUEST['dni'] == null) {
+            $this->textoResultado = "Error: falta el dni para borrar.";
+            return;
+        }
+
+        $preparedQuery->bind_param("s", $_REQUEST['dni']);
+        $resultado = $preparedQuery->execute();
+        if ($resultado)
+            $this->textoResultado = "Operación completada.";
+        else
+            $this->textoResultado = "Error al eliminar.";
     }
 
     public function generarInforme() {
@@ -169,8 +196,18 @@ class BaseDatos {
         $mediaTiempo = $this->ejecutar("SELECT AVG(tiempoSegundos) as tiempo FROM pruebasUsabilidad")->fetch_array()['tiempo'];
         $porcentaje = $this->ejecutar("SELECT SUM(pruebaCompletada) / COUNT(*) * 100 as completada FROM pruebasUsabilidad")->fetch_array()['completada'];
 
+        if (isset($frecuenciaSexos[0]))
+            $hombres = $frecuenciaSexos[0];
+        else
+            $hombres = 0;
+
+        if (isset($frecuenciaSexos[1]))
+            $mujeres = $frecuenciaSexos[1];
+        else
+            $mujeres = 0;
+
         $this->textoResultado = "Edad media de los usuarios: " . $mediaEdad .
-            "\n, Frecuencia de cada tipo de sexo: " . $frecuenciaSexos[0] . "Hombres, " . $frecuenciaSexos[1] . "Mujeres" .
+            "\n, Frecuencia de cada tipo de sexo: " . $hombres . " Hombres, " . $mujeres . " Mujeres" .
             "\n, Valor medio del nivel informático: " . $mediaNivelInformatico .
             "\n, Tiempo medio para la tarea: " . $mediaTiempo .
             "\n, Porcentaje de usuarios que completaron la tarea: " . $porcentaje;
@@ -192,7 +229,7 @@ class BaseDatos {
                         VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
                 $preparedQuery = $this->db->prepare($query);
                 $preparedQuery->bind_param(
-                    "s,s,s,s,i,i,s,i,i,b,s,s,i",
+                    "ssssiisiiissi",
                     $datos[0],
                     $datos[1],
                     $datos[2],
@@ -224,7 +261,7 @@ class BaseDatos {
         $this->conectar();
         $this->db->select_db("dbEjercicio6");
 
-        $resultado = $this->ejecutar("SELECT * FROM pruebasUsabilidad")->get_result();
+        $resultado = $this->ejecutar("SELECT * FROM pruebasUsabilidad");
 
         if ($resultado->fetch_assoc() != null) {
             $archivo = fopen("pruebasUsabilidad.csv", "w");
@@ -332,27 +369,27 @@ if (count($_POST) > 0) {
 
         <h2>Modificar datos</h2>
         <form action='#' method='post'>
-            <label>DNI del supervisor: <input type='text' name='dni' required></label>
-            <label>Nombre: <input type='text' name='nombre' required></label>
-            <label>Apellidos: <input type='text' name='apellidos' required></label>
+            <label>DNI del supervisor (se utiliza de clave): <input type='text' name='dni'></label>
+            <label>Nombre: <input type='text' name='nombre'></label>
+            <label>Apellidos: <input type='text' name='apellidos'></label>
             <label>Email: <input type='text' name='email'></label>
             <label>Telefono: <input type='text' name='telefono'></label>
-            <label>Edad: <input type='number' min='0' step='1' name='edad' required></label>
+            <label>Edad: <input type='number' min='0' step='1' name='edad'></label>
             <fieldset>
                 <legend>Sexo: </legend>
-                <p><label>Masculino<input type=radio value='m' name='sexo' checked='true'></label></p>
+                <p><label>Masculino<input type=radio value='m' name='sexo'></label></p>
                 <p><label>Femenino<input type=radio value='f' name='sexo'></label></p>
             </fieldset>
-            <label>Nivel informático: <input type='text' name='nivel' required></label>
-            <label>Tiempo (segundos): <input type='number' min='0' name='tiempo' required></label>
+            <label>Nivel informático: <input type='text' name='nivel'></label>
+            <label>Tiempo (segundos): <input type='number' min='0' name='tiempo'></label>
             <fieldset>
                 <legend>Completada: </legend>
                 <p><label>Sí<input type=radio value='si' name='completada'></label></p>
-                <p><label>No<input type=radio value='no' name='completada' checked='true'></label></p>
+                <p><label>No<input type=radio value='no' name='completada'></label></p>
             </fieldset>
             <label>Comentarios: <input type='text' name='comentarios'></label>
             <label>Propuestas: <input type='text' name='propuestas'></label>
-            <label>Valoración: <input type='number' min='0' max='10' name='valoracion' required></label>
+            <label>Valoración: <input type='number' min='0' max='10' name='valoracion'></label>
             <input type='submit' value='Modificar datos' name='modificar' />
         </form>
 
