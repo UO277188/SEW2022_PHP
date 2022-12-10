@@ -46,15 +46,15 @@ class BaseDatos {
             DNI_Supervisor VARCHAR(255) NOT NULL,
             nombreSupervisor VARCHAR(255) NOT NULL,
             apellidosSupervisor VARCHAR(255) NOT NULL,
-            email VARCHAR(255) NOT NULL,
-            telefono INT NOT NULL,
+            email VARCHAR(255),
+            telefono INT,
             edad INT NOT NULL,
             sexo VARCHAR(255) NOT NULL,
             nivelInformatico INT NOT NULL,
             tiempoSegundos INT NOT NULL,
             pruebaCompletada BOOLEAN NOT NULL,
-            cometarios VARCHAR(255) NOT NULL,
-            propuestas VARCHAR(255) NOT NULL,
+            comentarios VARCHAR(255),
+            propuestas VARCHAR(255),
             valoracion INT NOT NULL
             );
         ");
@@ -65,16 +65,93 @@ class BaseDatos {
     public function insertar() {
         $this->conectar();
         $this->db->select_db("dbEjercicio6");
+        $query = "INSERT INTO pruebasUsabilidad(DNI_Supervisor, nombreSupervisor, apellidosSupervisor, 
+                                                email, telefono, edad, sexo, nivelInformatico, tiempoSegundos, 
+                                                pruebaCompletada, comentarios, propuestas, valoracion) 
+                VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        $preparedQuery = $this->db->prepare($query);
+        $completadaBool = $_REQUEST['completada'] == "si";
+        $preparedQuery->bind_param(
+            "ssssiisiiissi",
+            $_REQUEST['dni'],
+            $_REQUEST['nombre'],
+            $_REQUEST['apellidos'],
+            $_REQUEST['email'],
+            $_REQUEST['telefono'],
+            $_REQUEST['edad'],
+            $_REQUEST['sexo'],
+            $_REQUEST['nivel'],
+            $_REQUEST['tiempo'],
+            $completadaBool,
+            $_REQUEST['comentarios'],
+            $_REQUEST['propuestas'],
+            $_REQUEST['valoracion']
+        );
+        $resultado = $preparedQuery->execute();
+        if ($resultado)
+            $this->textoResultado = "Fila insertada.";
+        else
+            $this->textoResultado = "Error al insertar.";
     }
 
     public function buscar() {
         $this->conectar();
         $this->db->select_db("dbEjercicio6");
+
+        $query = "SELECT * FROM pruebasUsabilidad WHERE DNI_Supervisor=?";
+        $preparedQuery = $this->db->prepare($query);
+        if ($_REQUEST['dni'] == null) {
+            $this->textoResultado = "Error: falta el dni para buscar.";
+            return;
+        }
+
+        $preparedQuery->bind_param("s", $_REQUEST['dni']);
+        $resultados = $preparedQuery->execute();
+
+        while ($fila = $resultados->fetch_array()) {
+            $this->textoResultado = "DNI: " . $fila['DNI_Supervisor'] .
+                "\n, Nombre: " . $fila['nombreSupervisor'] .
+                "\n Apellidos: " . $fila['apellidosSupervisor'] .
+                "\n Email: " . $fila['email'] .
+                "\n Telefono: " . $fila['telefono'] .
+                "\n Edad: " . $fila['edad'] .
+                "\n Sexo: " . $fila['sexo'] .
+                "\n Nivel informático: " . $fila['nivelInformatico'] .
+                "\n Tiempo (segundos): " . $fila['tiempoSegundos'] .
+                "\n Completada: " . $fila['pruebaCompletada'] .
+                "\n Comentarios: " . $fila['comentarios'] .
+                "\n Propuestas: " . $fila['propuestas'] .
+                "\n Valoracion: " . $fila['valoracion'];
+        }
     }
 
     public function modificar() {
         $this->conectar();
         $this->db->select_db("dbEjercicio6");
+
+        $query = "UPDATE pruebasUsabilidad(DNI_Supervisor, nombreSupervisor, apellidosSupervisor, 
+                                                email, telefono, edad, sexo, nivelInformatico, tiempoSegundos, 
+                                                pruebaCompletada, comentarios, propuestas, valoracion) 
+                VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        $preparedQuery = $this->db->prepare($query);
+        $preparedQuery->bind_param(
+            "s,s,s,s,i,i,s,i,i,b,s,s,i",
+            $_REQUEST['dni'],
+            $_REQUEST['nombre'],
+            $_REQUEST['apellidos'],
+            $_REQUEST['email'],
+            $_REQUEST['telefono'],
+            $_REQUEST['edad'],
+            $_REQUEST['sexo'],
+            $_REQUEST['nivel'],
+            $_REQUEST['tiempo'],
+            $_REQUEST['completada'] == "si",
+            $_REQUEST['comentarios'],
+            $_REQUEST['propuestas'],
+            $_REQUEST['valoracion']
+        );
+        $resultado = $preparedQuery->execute();
+        $this->textoResultado = "Fila modificada.";
     }
 
     public function eliminar() {
@@ -210,13 +287,14 @@ if (count($_POST) > 0) {
 <body>
     <main>
         <h1>Ejercicio 6 de PHP</h1>
+
+        <h2>Resultado</h2>
+        <p><?php echo $_SESSION['db']->getResultado(); ?></p>
+
+        <h2>Operaciones</h2>
         <form action='#' method='post'>
             <input type='submit' value='Crear base de datos' name='crearBD' />
             <input type='submit' value='Crear una tabla' name='crearTabla' />
-            <input type='submit' value='Insertar datos' name='insertar' />
-            <input type='submit' value='Buscar datos' name='buscar' />
-            <input type='submit' value='Modificar datos' name='modificar' />
-            <input type='submit' value='Eliminar datos' name='eliminar' />
             <input type='submit' value='Generar informe' name='informe' />
 
             <label for='file'>Seleccionar CSV</label><br>
@@ -226,8 +304,69 @@ if (count($_POST) > 0) {
             <input type='submit' value='Descargar CSV' name='descargar' />
         </form>
 
-        <h2>Resultado</h2>
-        <p><?php echo $_SESSION['db']->getResultado(); ?></p>
+        <h2>Insertar Datos</h2>
+        <form action='#' method='post'>
+            <label>DNI del supervisor: <input type='text' name='dni' required></label>
+            <label>Nombre: <input type='text' name='nombre' required></label>
+            <label>Apellidos: <input type='text' name='apellidos' required></label>
+            <label>Email: <input type='text' name='email'></label>
+            <label>Telefono: <input type='text' name='telefono'></label>
+            <label>Edad: <input type='number' min='0' step='1' name='edad' required></label>
+            <fieldset>
+                <legend>Sexo: </legend>
+                <p><label>Masculino<input type=radio value='m' name='sexo' checked='true'></label></p>
+                <p><label>Femenino<input type=radio value='f' name='sexo'></label></p>
+            </fieldset>
+            <label>Nivel informático: <input type='text' name='nivel' required></label>
+            <label>Tiempo (segundos): <input type='number' min='0' name='tiempo' required></label>
+            <fieldset>
+                <legend>Completada: </legend>
+                <p><label>Sí<input type=radio value='si' name='completada'></label></p>
+                <p><label>No<input type=radio value='no' name='completada' checked='true'></label></p>
+            </fieldset>
+            <label>Comentarios: <input type='text' name='comentarios'></label>
+            <label>Propuestas: <input type='text' name='propuestas'></label>
+            <label>Valoración: <input type='number' min='0' max='10' name='valoracion' required></label>
+            <input type='submit' value='Insertar datos' name='insertar' />
+        </form>
+
+        <h2>Modificar datos</h2>
+        <form action='#' method='post'>
+            <label>DNI del supervisor: <input type='text' name='dni' required></label>
+            <label>Nombre: <input type='text' name='nombre' required></label>
+            <label>Apellidos: <input type='text' name='apellidos' required></label>
+            <label>Email: <input type='text' name='email'></label>
+            <label>Telefono: <input type='text' name='telefono'></label>
+            <label>Edad: <input type='number' min='0' step='1' name='edad' required></label>
+            <fieldset>
+                <legend>Sexo: </legend>
+                <p><label>Masculino<input type=radio value='m' name='sexo' checked='true'></label></p>
+                <p><label>Femenino<input type=radio value='f' name='sexo'></label></p>
+            </fieldset>
+            <label>Nivel informático: <input type='text' name='nivel' required></label>
+            <label>Tiempo (segundos): <input type='number' min='0' name='tiempo' required></label>
+            <fieldset>
+                <legend>Completada: </legend>
+                <p><label>Sí<input type=radio value='si' name='completada'></label></p>
+                <p><label>No<input type=radio value='no' name='completada' checked='true'></label></p>
+            </fieldset>
+            <label>Comentarios: <input type='text' name='comentarios'></label>
+            <label>Propuestas: <input type='text' name='propuestas'></label>
+            <label>Valoración: <input type='number' min='0' max='10' name='valoracion' required></label>
+            <input type='submit' value='Modificar datos' name='modificar' />
+        </form>
+
+        <h2>Borrar datos</h2>
+        <form action='#' method='post'>
+            <label>DNI del supervisor: <input type='text' name='dni' required></label>
+            <input type='submit' value='Eliminar datos' name='eliminar' />
+        </form>
+
+        <h2>Buscar datos</h2>
+        <form action='#' method='post'>
+            <label>DNI del supervisor: <input type='text' name='dni' required></label>
+            <input type='submit' value='Buscar datos' name='buscar' />
+        </form>
     </main>
 </body>
 
