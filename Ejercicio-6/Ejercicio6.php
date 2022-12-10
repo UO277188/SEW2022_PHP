@@ -195,6 +195,7 @@ class BaseDatos {
         $mediaNivelInformatico = $this->ejecutar("SELECT AVG(nivelInformatico) as nivel FROM pruebasUsabilidad")->fetch_array()['nivel'];
         $mediaTiempo = $this->ejecutar("SELECT AVG(tiempoSegundos) as tiempo FROM pruebasUsabilidad")->fetch_array()['tiempo'];
         $porcentaje = $this->ejecutar("SELECT SUM(pruebaCompletada) / COUNT(*) * 100 as completada FROM pruebasUsabilidad")->fetch_array()['completada'];
+        $mediaValoracion = $this->ejecutar("SELECT AVG(valoracion) as valoracion FROM pruebasUsabilidad")->fetch_array()['valoracion'];
 
         while ($fila = $frecuenciaSexos->fetch_assoc()) {
             if ($fila['sexo'] == 'm')
@@ -208,7 +209,8 @@ class BaseDatos {
             "\n, Frecuencia de cada tipo de sexo: " . $hombres . " Hombres, " . $mujeres . " Mujeres" .
             "\n, Valor medio del nivel informático: " . $mediaNivelInformatico .
             "\n, Tiempo medio para la tarea: " . $mediaTiempo . " segundos" .
-            "\n, Porcentaje de usuarios que completaron la tarea: " . $porcentaje . " %";
+            "\n, Porcentaje de usuarios que completaron la tarea: " . $porcentaje . " %" .
+            "\n, Valoración media: " . $mediaValoracion;
     }
 
     public function insertarCSV() {
@@ -259,15 +261,28 @@ class BaseDatos {
         $this->db->select_db("dbEjercicio6");
 
         $resultado = $this->ejecutar("SELECT * FROM pruebasUsabilidad");
+        $nombre = "pruebasUsabilidad.csv";
 
         if ($resultado->fetch_assoc() != null) {
-            $archivo = fopen("pruebasUsabilidad.csv", "w");
+            $archivo = fopen($nombre, "w");
 
             foreach ($resultado as $fila) {
                 fputcsv($archivo, $fila);
             }
 
             fclose($archivo);
+
+            $nombreDescarga = basename('pruebasUsabilidad.csv');
+            $filePath = '' . $nombreDescarga;
+            if (!empty($nombreDescarga) && file_exists($filePath)) {
+                header("Cache-Control: public");
+                header("Content-Description: File Transfer");
+                header("Content-Disposition: attachment; filename=$nombreDescarga");
+                header("Content-Type: text/csv");
+                header("Content-Transfer-Encoding: binary");
+                readfile($filePath);
+                exit;
+            }
         }
     }
 
