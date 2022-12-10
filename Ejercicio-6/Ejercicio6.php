@@ -191,70 +191,67 @@ class BaseDatos {
         $this->db->select_db("dbEjercicio6");
 
         $mediaEdad = $this->ejecutar("SELECT AVG(edad) as edad FROM pruebasUsabilidad")->fetch_array()['edad'];
-        $frecuenciaSexos = $this->ejecutar("SELECT COUNT(*) as frecuencias FROM pruebasUsabilidad GROUP BY sexo")->fetch_array()['frecuencias'];
+        $frecuenciaSexos = $this->ejecutar("SELECT sexo, COUNT(*) as frecuencias FROM pruebasUsabilidad GROUP BY sexo");
         $mediaNivelInformatico = $this->ejecutar("SELECT AVG(nivelInformatico) as nivel FROM pruebasUsabilidad")->fetch_array()['nivel'];
         $mediaTiempo = $this->ejecutar("SELECT AVG(tiempoSegundos) as tiempo FROM pruebasUsabilidad")->fetch_array()['tiempo'];
         $porcentaje = $this->ejecutar("SELECT SUM(pruebaCompletada) / COUNT(*) * 100 as completada FROM pruebasUsabilidad")->fetch_array()['completada'];
 
-        if (isset($frecuenciaSexos[0]))
-            $hombres = $frecuenciaSexos[0];
-        else
-            $hombres = 0;
+        while ($fila = $frecuenciaSexos->fetch_assoc()) {
+            if ($fila['sexo'] == 'm')
+                $hombres = $fila['frecuencias'];
 
-        if (isset($frecuenciaSexos[1]))
-            $mujeres = $frecuenciaSexos[1];
-        else
-            $mujeres = 0;
+            if ($fila['sexo'] == 'f')
+                $mujeres = $fila['frecuencias'];
+        }
 
         $this->textoResultado = "Edad media de los usuarios: " . $mediaEdad .
             "\n, Frecuencia de cada tipo de sexo: " . $hombres . " Hombres, " . $mujeres . " Mujeres" .
             "\n, Valor medio del nivel informático: " . $mediaNivelInformatico .
-            "\n, Tiempo medio para la tarea: " . $mediaTiempo .
-            "\n, Porcentaje de usuarios que completaron la tarea: " . $porcentaje;
+            "\n, Tiempo medio para la tarea: " . $mediaTiempo . " segundos" .
+            "\n, Porcentaje de usuarios que completaron la tarea: " . $porcentaje . " %";
     }
 
     public function insertarCSV() {
         $this->conectar();
         $this->db->select_db("dbEjercicio6");
 
-        $nombre = $_FILES[0]["name"];
-        $ruta = '' . $nombre;
+        if (isset($_FILES['file'])) {
+            $nombre = $_FILES["file"]["tmp_name"];
+        }
 
-        if (!empty($nombre) && file_exists($ruta)) {
-            $archivo = fopen($nombre, "r");
-            while (($datos = fgetcsv($archivo, 1000, ",")) !== FALSE) {
-                $query = "INSERT INTO pruebasUsabilidad(DNI_Supervisor, nombreSupervisor, apellidosSupervisor, 
+        $archivo = fopen($nombre, "r");
+        while (($datos = fgetcsv($archivo)) !== false) {
+            $query = "INSERT INTO pruebasUsabilidad(DNI_Supervisor, nombreSupervisor, apellidosSupervisor, 
                                                         email, telefono, edad, sexo, nivelInformatico, tiempoSegundos, 
                                                         pruebaCompletada, comentarios, propuestas, valoracion) 
                         VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
-                $preparedQuery = $this->db->prepare($query);
-                $preparedQuery->bind_param(
-                    "ssssiisiiissi",
-                    $datos[0],
-                    $datos[1],
-                    $datos[2],
-                    $datos[3],
-                    $datos[4],
-                    $datos[5],
-                    $datos[6],
-                    $datos[7],
-                    $datos[8],
-                    $datos[9],
-                    $datos[10],
-                    $datos[11],
-                    $datos[12]
-                );
-                $resultado = $preparedQuery->execute();
+            $preparedQuery = $this->db->prepare($query);
+            $preparedQuery->bind_param(
+                "ssssiisiiissi",
+                $datos[0],
+                $datos[1],
+                $datos[2],
+                $datos[3],
+                $datos[4],
+                $datos[5],
+                $datos[6],
+                $datos[7],
+                $datos[8],
+                $datos[9],
+                $datos[10],
+                $datos[11],
+                $datos[12]
+            );
+            $resultado = $preparedQuery->execute();
 
-                if (isset($resultado)) {
-                    $this->textoResultado = "CSV importado.";
-                } else {
-                    $this->textoResultado = "Error al importar el fichero CSV.";
-                }
+            if ($resultado) {
+                $this->textoResultado = "CSV importado.";
+            } else {
+                $this->textoResultado = "Error al importar el fichero CSV.";
             }
-
-            fclose($archivo);
         }
+
+        fclose($archivo);
     }
 
     public function descargar() {
@@ -266,8 +263,9 @@ class BaseDatos {
         if ($resultado->fetch_assoc() != null) {
             $archivo = fopen("pruebasUsabilidad.csv", "w");
 
-            while ($fila = $resultado->fetch_assoc())
+            foreach ($resultado as $fila) {
                 fputcsv($archivo, $fila);
+            }
 
             fclose($archivo);
         }
@@ -329,7 +327,7 @@ if (count($_POST) > 0) {
         <p><?php echo $_SESSION['db']->getResultado(); ?></p>
 
         <h2>Operaciones</h2>
-        <form action='#' method='post'>
+        <form action='#' method='post' enctype='multipart/form-data'>
             <input type='submit' value='Crear base de datos' name='crearBD' />
             <input type='submit' value='Crear una tabla' name='crearTabla' />
             <input type='submit' value='Generar informe' name='informe' />
