@@ -1,0 +1,50 @@
+CREATE DATABASE IF NOT EXISTS ejercicio7;
+
+USE ejercicio7;
+
+CREATE TABLE IF NOT EXISTS `Aeropuerto` (
+    `id_aeropuerto` VARCHAR(255) NOT NULL,
+    `nombre_aeropuerto` VARCHAR(255) NOT NULL,
+    `ciudad` VARCHAR(255) NOT NULL,
+	
+	PRIMARY KEY (`id_aeropuerto`)
+);
+
+CREATE TABLE IF NOT EXISTS `Aerolinea` (
+    `id_aerolinea` VARCHAR(255) NOT NULL,
+    `nombre_aerolinea` VARCHAR(255) NOT NULL,
+    `pais` VARCHAR(255) NOT NULL,
+	
+	PRIMARY KEY (`id_aerolinea`)
+);
+
+CREATE TABLE IF NOT EXISTS `Avion` (
+    `id_avion` VARCHAR(255) NOT NULL,
+    `id_aerolinea` VARCHAR(255) NOT NULL,
+    `modelo` VARCHAR(255) NOT NULL,
+	
+	PRIMARY KEY (`id_avion`)
+);
+
+CREATE TABLE IF NOT EXISTS `Vuelo` (
+    `id_vuelo` VARCHAR(255) NOT NULL,
+    `id_avion` VARCHAR(255) NOT NULL,
+    `salida` VARCHAR(255) NOT NULL,
+    `destino` VARCHAR(255) NOT NULL,
+    `pasajeros` INT NOT NULL,
+    `fecha` DATE NOT NULL,
+	
+	PRIMARY KEY (`id_vuelo`)
+);
+
+CREATE TABLE IF NOT EXISTS `Opera` (
+    `id_aerolinea` VARCHAR(255) NOT NULL,
+    `id_aeropuerto` VARCHAR(255) NOT NULL,
+	
+	PRIMARY KEY (`id_aerolinea`, `id_aeropuerto`)
+);
+
+ALTER TABLE `Avion` ADD CONSTRAINT FOREIGN KEY (`id_aerolinea`) REFERENCES `Aerolinea`(`id_aerolinea`);
+ALTER TABLE `Vuelo` ADD CONSTRAINT FOREIGN KEY (`id_avion`) REFERENCES `Avion`(`id_avion`);
+ALTER TABLE `Opera` ADD CONSTRAINT FOREIGN KEY (`id_aerolinea`) REFERENCES `Aerolinea`(`id_aerolinea`);
+ALTER TABLE `Opera` ADD CONSTRAINT FOREIGN KEY (`id_aeropuerto`) REFERENCES `Aeropuerto`(`id_aeropuerto`);
