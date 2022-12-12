@@ -178,22 +178,25 @@ class BaseDatos {
         $this->conectar();
         $this->db->select_db("ejercicio7");
 
+        // comprobar si existe el avion
         $query = "SELECT * FROM Avion WHERE id_avion=?";
         $preparedQuery = $this->db->prepare($query);
         $preparedQuery->bind_param("s", $_REQUEST['idAvion']);
         $preparedQuery->execute();
         $resultados = $preparedQuery->get_result();
-        if(!$resultados->num_rows > 0){
+        if (!$resultados->num_rows > 0) {
             $this->textoResultado = "<p>No existe el avión.</p>";
             return;
         }
+
+        $nuevoID = uniqid();
 
         $query = "INSERT INTO Vuelo(id_vuelo, id_avion, salida, destino, pasajeros, fecha) 
                     VALUES(?,?,?,?,?,?)";
         $preparedQuery = $this->db->prepare($query);
         $preparedQuery->bind_param(
             "ssssis",
-            uniqid(),
+            $nuevoID,
             $_REQUEST['idAvion'],
             $_REQUEST['salida'],
             $_REQUEST['destino'],
@@ -206,7 +209,7 @@ class BaseDatos {
             $this->textoResultado = "<p>Vuelo insertado.</p>";
         else
             $this->textoResultado = "<p>Error al insertar el vuelo.</p>";
-    }   
+    }
 }
 
 if (!isset($_SESSION['db_ej7'])) {

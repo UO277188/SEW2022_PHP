@@ -1,20 +1,19 @@
-<!DOCTYPE HTML>
 <html lang="es">
 
 <head>
     <!-- Datos que describen el documento -->
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
 
     <!--Metadatos de los documentos HTML5-->
-    <meta name="author" content="Diego Villa García" />
-    <meta name="description" content="Ejercicio 6 de PHP" />
-    <meta name="keywords" content="ejercicio, php, base de datos" />
+    <meta name="author" content="Diego Villa García">
+    <meta name="description" content="Ejercicio 6 de PHP">
+    <meta name="keywords" content="ejercicio, php, base de datos">
 
     <!--Definición de la ventana gráfica-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Ejercicio 6 de PHP</title>
-    <link rel="stylesheet" type="text/css" href="Ejercicio6.css" />
+    <link rel="stylesheet" type="text/css" href="Ejercicio6.css">
 </head>
 
 <body>
@@ -22,86 +21,92 @@
         <h1>Ejercicio 6 de PHP</h1>
 
         <h2>Resultado</h2>
-        <p>Resultados
-        </p>
+        <p>Edad media de los usuarios: 44.5000
+            , Frecuencia de cada tipo de sexo: 3 Hombres, 1 Mujeres
+            , Valor medio del nivel informático: 5.7500
+            , Tiempo medio para la tarea: 232.0000 segundos
+            , Porcentaje de usuarios que completaron la tarea: 50.0000 %
+            , Valoración media: 3.7500</p>
 
         <h2>Operaciones</h2>
-        <form action='#' method='post' enctype='multipart/form-data'>
-            <input type='submit' value='Crear base de datos' name='crearBD' />
-            <input type='submit' value='Crear una tabla' name='crearTabla' />
-            <input type='submit' value='Generar informe' name='informe' />
+        <form action="#" method="post" enctype="multipart/form-data">
+            <input type="submit" value="Crear base de datos" name="crearBD">
+            <input type="submit" value="Crear una tabla" name="crearTabla">
+            <input type="submit" value="Generar informe" name="informe">
 
-            <label for='file'>Seleccionar CSV</label><br>
-            <input type='file' id='file' name='file' />
-            <input type='submit' value='Insertar datos del CSV' name='insertarCSV' />
+            <label for="file">Seleccionar CSV</label><br>
+            <input type="file" id="file" name="file">
+            <input type="submit" value="Insertar datos del CSV" name="insertarCSV">
 
-            <input type='submit' value='Descargar CSV' name='descargar' />
+            <input type="submit" value="Descargar CSV" name="descargar">
         </form>
 
         <h2>Insertar Datos</h2>
-        <form action='#' method='post'>
-            <label>DNI del supervisor: <input type='text' name='dni' required></label>
-            <label>Nombre: <input type='text' name='nombre' required></label>
-            <label>Apellidos: <input type='text' name='apellidos' required></label>
-            <label>Email: <input type='text' name='email'></label>
-            <label>Telefono: <input type='text' name='telefono'></label>
-            <label>Edad: <input type='number' min='0' step='1' name='edad' required></label>
+        <form action="#" method="post">
+            <label>DNI del supervisor: <input type="text" name="dni" required=""></label>
+            <label>Nombre: <input type="text" name="nombre" required=""></label>
+            <label>Apellidos: <input type="text" name="apellidos" required=""></label>
+            <label>Email: <input type="text" name="email"></label>
+            <label>Telefono: <input type="text" name="telefono"></label>
+            <label>Edad: <input type="number" min="0" step="1" name="edad" required=""></label>
             <fieldset>
                 <legend>Sexo: </legend>
-                <p><label>Masculino<input type=radio value='m' name='sexo' checked></label></p>
-                <p><label>Femenino<input type=radio value='f' name='sexo'></label></p>
+                <p><label>Masculino<input type="radio" value="m" name="sexo" checked=""></label></p>
+                <p><label>Femenino<input type="radio" value="f" name="sexo"></label></p>
             </fieldset>
-            <label>Nivel informático: <input type='text' name='nivel' required></label>
-            <label>Tiempo (segundos): <input type='number' min='0' name='tiempo' required></label>
+            <label>Nivel informático: <input type="text" name="nivel" required=""></label>
+            <label>Tiempo (segundos): <input type="number" min="0" name="tiempo" required=""></label>
             <fieldset>
                 <legend>Completada: </legend>
-                <p><label>Sí<input type=radio value='si' name='completada'></label></p>
-                <p><label>No<input type=radio value='no' name='completada' checked></label></p>
+                <p><label>Sí<input type="radio" value="si" name="completada"></label></p>
+                <p><label>No<input type="radio" value="no" name="completada" checked=""></label></p>
             </fieldset>
-            <label>Comentarios: <input type='text' name='comentarios'></label>
-            <label>Propuestas: <input type='text' name='propuestas'></label>
-            <label>Valoración: <input type='number' min='0' max='10' name='valoracion' required></label>
-            <input type='submit' value='Insertar datos' name='insertar' />
+            <label>Comentarios: <input type="text" name="comentarios"></label>
+            <label>Propuestas: <input type="text" name="propuestas"></label>
+            <label>Valoración: <input type="number" min="0" max="10" name="valoracion" required=""></label>
+            <input type="submit" value="Insertar datos" name="insertar">
         </form>
 
         <h2>Modificar datos</h2>
-        <form action='#' method='post'>
-            <label>DNI del supervisor (se utiliza de clave): <input type='text' name='dni'></label>
-            <label>Nombre: <input type='text' name='nombre'></label>
-            <label>Apellidos: <input type='text' name='apellidos'></label>
-            <label>Email: <input type='text' name='email'></label>
-            <label>Telefono: <input type='text' name='telefono'></label>
-            <label>Edad: <input type='number' min='0' step='1' name='edad'></label>
+        <form action="#" method="post">
+            <label>DNI del supervisor (se utiliza de clave): <input type="text" name="dni"></label>
+            <label>Nombre: <input type="text" name="nombre"></label>
+            <label>Apellidos: <input type="text" name="apellidos"></label>
+            <label>Email: <input type="text" name="email"></label>
+            <label>Telefono: <input type="text" name="telefono"></label>
+            <label>Edad: <input type="number" min="0" step="1" name="edad"></label>
             <fieldset>
                 <legend>Sexo: </legend>
-                <p><label>Masculino<input type=radio value='m' name='sexo'></label></p>
-                <p><label>Femenino<input type=radio value='f' name='sexo'></label></p>
+                <p><label>Masculino<input type="radio" value="m" name="sexo"></label></p>
+                <p><label>Femenino<input type="radio" value="f" name="sexo"></label></p>
             </fieldset>
-            <label>Nivel informático: <input type='text' name='nivel'></label>
-            <label>Tiempo (segundos): <input type='number' min='0' name='tiempo'></label>
+            <label>Nivel informático: <input type="text" name="nivel"></label>
+            <label>Tiempo (segundos): <input type="number" min="0" name="tiempo"></label>
             <fieldset>
                 <legend>Completada: </legend>
-                <p><label>Sí<input type=radio value='si' name='completada'></label></p>
-                <p><label>No<input type=radio value='no' name='completada'></label></p>
+                <p><label>Sí<input type="radio" value="si" name="completada"></label></p>
+                <p><label>No<input type="radio" value="no" name="completada"></label></p>
             </fieldset>
-            <label>Comentarios: <input type='text' name='comentarios'></label>
-            <label>Propuestas: <input type='text' name='propuestas'></label>
-            <label>Valoración: <input type='number' min='0' max='10' name='valoracion'></label>
-            <input type='submit' value='Modificar datos' name='modificar' />
+            <label>Comentarios: <input type="text" name="comentarios"></label>
+            <label>Propuestas: <input type="text" name="propuestas"></label>
+            <label>Valoración: <input type="number" min="0" max="10" name="valoracion"></label>
+            <input type="submit" value="Modificar datos" name="modificar">
         </form>
 
         <h2>Borrar datos</h2>
-        <form action='#' method='post'>
-            <label>DNI del supervisor: <input type='text' name='dni' required></label>
-            <input type='submit' value='Eliminar datos' name='eliminar' />
+        <form action="#" method="post">
+            <label>DNI del supervisor: <input type="text" name="dni" required=""></label>
+            <input type="submit" value="Eliminar datos" name="eliminar">
         </form>
 
         <h2>Buscar datos</h2>
-        <form action='#' method='post'>
-            <label>DNI del supervisor: <input type='text' name='dni' required></label>
-            <input type='submit' value='Buscar datos' name='buscar' />
+        <form action="#" method="post">
+            <label>DNI del supervisor: <input type="text" name="dni" required=""></label>
+            <input type="submit" value="Buscar datos" name="buscar">
         </form>
     </main>
+
+
 </body>
 
 </html>

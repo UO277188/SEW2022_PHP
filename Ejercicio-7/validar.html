@@ -1,20 +1,17 @@
-<!DOCTYPE HTML>
-<html lang="es">
-
-<head>
+<html lang="es"><head>
     <!-- Datos que describen el documento -->
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8">
 
     <!--Metadatos de los documentos HTML5-->
-    <meta name="author" content="Diego Villa García" />
-    <meta name="description" content="Ejercicio 7 de PHP" />
-    <meta name="keywords" content="ejercicio, php, base de datos" />
+    <meta name="author" content="Diego Villa García">
+    <meta name="description" content="Ejercicio 7 de PHP">
+    <meta name="keywords" content="ejercicio, php, base de datos">
 
     <!--Definición de la ventana gráfica-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Ejercicio 7 de PHP</title>
-    <link rel="stylesheet" type="text/css" href="Ejercicio7.css" />
+    <link rel="stylesheet" type="text/css" href="Ejercicio7.css">
 </head>
 
 <body>
@@ -22,17 +19,27 @@
         <h1>Ejercicio 7 de PHP: Aplicación de vuelos</h1>
 
         <h2>Resultado de la operación</h2>
-
+        <p>ID: 63975df85c493, ID Avión: 2003, Salida: Tokyo, Destino: Bali, Pasajeros: 12, Fecha: 2021-11-11</p><p>ID: 63975e404b926, ID Avión: 2003, Salida: Tokyo, Destino: Madrid, Pasajeros: 123, Fecha: 2006-06-01</p>
         <h2>Buscar</h2>
-        <form action='#' method='post'>
-            <label>Barra de búsqueda: <input type='text' name='barraBuscar' required></label>
-            <input type='submit' value='Buscar avión por modelo' name='buscarAvion' />
-            <input type='submit' value='Buscar aerolíneas por país' name='buscarAerolineas' />
-            <input type='submit' value='Buscar aeropuertos en una ciudad' name='buscarAeropuertos' />
-            <input type='submit' value='Buscar vuelos por salida' name='buscarVuelosSalida' />
-            <input type='submit' value='Buscar vuelos por destino' name='buscarVuelosDestino' />
+        <form action="#" method="post">
+            <label>Barra de búsqueda: <input type="text" name="barraBuscar" required=""></label>
+            <input type="submit" value="Buscar avión por modelo" name="buscarAvion">
+            <input type="submit" value="Buscar aerolíneas por país" name="buscarAerolineas">
+            <input type="submit" value="Buscar aeropuertos en una ciudad" name="buscarAeropuertos">
+            <input type="submit" value="Buscar vuelos por salida" name="buscarVuelosSalida">
+            <input type="submit" value="Buscar vuelos por destino" name="buscarVuelosDestino">
+        </form>
+
+        <h2>Añadir vuelo</h2>
+        <form action="#" method="post">
+            <label>ID del avión: <input type="text" name="idAvion" required=""></label>
+            <label>Salida: <input type="text" name="salida" required=""></label>
+            <label>Destino: <input type="text" name="destino" required=""></label>
+            <label>Pasajeros: <input type="text" name="pasajeros" required=""></label>
+            <label>Fecha: <input type="date" name="fecha" required=""></label>
+            <input type="submit" value="Añadir" name="añadirVuelo">
         </form>
     </main>
-</body>
 
-</html>
+
+</body></html>
