@@ -173,6 +173,40 @@ class BaseDatos {
     public function getResultado() {
         return $this->textoResultado;
     }
+
+    public function añadirVuelo() {
+        $this->conectar();
+        $this->db->select_db("ejercicio7");
+
+        $query = "SELECT * FROM Avion WHERE id_avion=?";
+        $preparedQuery = $this->db->prepare($query);
+        $preparedQuery->bind_param("s", $_REQUEST['idAvion']);
+        $preparedQuery->execute();
+        $resultados = $preparedQuery->get_result();
+        if(!$resultados->num_rows > 0){
+            $this->textoResultado = "<p>No existe el avión.</p>";
+            return;
+        }
+
+        $query = "INSERT INTO Vuelo(id_vuelo, id_avion, salida, destino, pasajeros, fecha) 
+                    VALUES(?,?,?,?,?,?)";
+        $preparedQuery = $this->db->prepare($query);
+        $preparedQuery->bind_param(
+            "ssssis",
+            uniqid(),
+            $_REQUEST['idAvion'],
+            $_REQUEST['salida'],
+            $_REQUEST['destino'],
+            $_REQUEST['pasajeros'],
+            $_REQUEST['fecha']
+        );
+
+        $resultado = $preparedQuery->execute();
+        if ($resultado)
+            $this->textoResultado = "<p>Vuelo insertado.</p>";
+        else
+            $this->textoResultado = "<p>Error al insertar el vuelo.</p>";
+    }   
 }
 
 if (!isset($_SESSION['db_ej7'])) {
@@ -189,6 +223,7 @@ if (count($_POST) > 0) {
     if (isset($_POST['buscarAeropuertos'])) $db->buscarAeropuertos();
     if (isset($_POST['buscarVuelosSalida'])) $db->buscarVuelosSalida();
     if (isset($_POST['buscarVuelosDestino'])) $db->buscarVuelosDestino();
+    if (isset($_POST['añadirVuelo'])) $db->añadirVuelo();
 
     $db->desconectar();
     $_SESSION['db_ej7'] = $db;
@@ -229,6 +264,16 @@ if (count($_POST) > 0) {
             <input type='submit' value='Buscar aeropuertos en una ciudad' name='buscarAeropuertos' />
             <input type='submit' value='Buscar vuelos por salida' name='buscarVuelosSalida' />
             <input type='submit' value='Buscar vuelos por destino' name='buscarVuelosDestino' />
+        </form>
+
+        <h2>Añadir vuelo</h2>
+        <form action='#' method='post'>
+            <label>ID del avión: <input type='text' name='idAvion' required></label>
+            <label>Salida: <input type='text' name='salida' required></label>
+            <label>Destino: <input type='text' name='destino' required></label>
+            <label>Pasajeros: <input type='text' name='pasajeros' required></label>
+            <label>Fecha: <input type='date' name='fecha' required></label>
+            <input type='submit' value='Añadir' name='añadirVuelo' />
         </form>
     </main>
 </body>
